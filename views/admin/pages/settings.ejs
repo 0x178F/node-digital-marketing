@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head> <%- include('../partials/head', {title: "Settings Page"}) %></head>
+
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <%- include('../partials/header') %>
+    </header><!-- End Header -->
+
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+        <%- include('../partials/side-bar') %>
+    </aside><!-- End Sidebar-->
+
+    <main id="main" class="main">
+
+        <div class="pagetitle">
+            <h1>Settings Page</h1>
+        </div><!-- End Page Title -->
+
+        <%- include('../partials/handleMessage') %>
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Settings</h5>
+                            <form id="settingsForm" class="mt-2" action="/admin/settings/update" method="POST" enctype="multipart/form-data">
+                                <div class="row mb-3">
+                                    <label for="name" class="col-sm-2 col-form-label">Store Name:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="name" class="form-control" id="name" value="<%= settings ? settings.settings.name : '' %>">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="title" class="col-sm-2 col-form-label">Title:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="title" class="form-control" id="title" value="<%= settings ? settings.settings.title : '' %>">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="description" class="col-sm-2 col-form-label">Description:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="description" class="form-control" id="description" value="<%= settings ? settings.settings.description: '' %>">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="keywords" class="col-sm-2 col-form-label">Keywords:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="keywords" class="form-control" id="keywords" value="<%= settings ? settings.settings.keywords: '' %>">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="recaptcha" class="col-sm-2 col-form-label">Recaptcha Key:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="recaptcha" class="form-control" id="recaptcha" value="<%= settings ? settings.settings.recaptcha : '' %>">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="paymentLimit" class="col-sm-2 col-form-label">Min Payment:</label>
+                                    <div class="col-sm-10">
+                                        <input type="number" name="paymentLimit" class="form-control" id="paymentLimit" value="<%= settings ? settings.settings.paymentLimit : '' %>">
+                                    </div>
+                                </div>
+                            
+                                <div class="row mb-3">
+                                    <label for="file" class="col-sm-2 col-form-label">Favicon:</label>
+                                    <div class="col-sm-9">
+                                        <input class="form-control" type="file" name="image" id="file">
+                                    </div>
+                                    <div class="col-sm-1"><img class="col-sm-12" src="<%= locals.settings ? locals.settings.settings.image.replace('public/','/') : ''%>"></div>
+                                </div>
+                        </div>
+
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">#Home Area</h5>
+                            <!-- Quill Editor Default -->
+                            <div id="homeAreaEditor">
+                                <%- settings ? settings.settings.homeArea : '' %>
+                            </div>
+                            <input type="hidden" name="homeArea" id="homeArea" />
+                            <!-- End Quill Editor Default -->
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">#Details Area</h5>
+                            <!-- Quill Editor Default -->
+                            <div id="detailsAreaEditor">
+                                <%- settings ? settings.settings.detailsArea : '' %>
+                            </div>
+                            <input type="hidden" name="detailsArea" id="detailsArea" />
+                            <!-- End Quill Editor Default -->
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="d-grid col-sm-6 mx-auto">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+
+            </div>
+        </section>
+
+    </main><!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="footer">
+        <%- include('../partials/footer') %>
+    </footer><!-- End Footer -->
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+
+    <%- include('../partials/plugin') %>
+    <script>
+        const quil1 = new Quill('#homeAreaEditor', {
+            theme: 'snow'
+        });
+        var quil2 = new Quill('#detailsAreaEditor', {
+            theme: 'snow'
+        });
+  
+        const settingsForm = document.querySelector("#settingsForm");
+        const homeArea = document.querySelector('#homeArea');
+        const detailsArea = document.querySelector('#detailsArea');
+        settingsForm.addEventListener('submit', function (e) {
+            homeArea.value = quil1.root.innerHTML;
+            detailsArea.value = quil2.root.innerHTML;
+        });
+    </script>
+</body>
+
+</html>

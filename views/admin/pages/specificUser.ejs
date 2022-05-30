@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head> <%- include('../partials/head', {title: "User List"}) %></head>
+
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <%- include('../partials/header') %>
+    </header><!-- End Header -->
+
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+        <%- include('../partials/side-bar') %>
+    </aside><!-- End Sidebar-->
+
+    <main id="main" class="main">
+
+        <div class="pagetitle">
+            <h1>Users List</h1>
+        </div><!-- End Page Title -->
+
+        <%- include('../partials/handleMessage') %>
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="text-uppercase text-left card-title text-center">
+                                <%= user.username %> </h5>
+                            <form action="/admin/users/<%= user._id %>/update" method="post">
+                                <div class="row mb-3">
+                                    <div class="col-sm-12">
+                                        <label for="role" class="col-form-label">Role:</label>
+                                        <select class="form-control" name="role" id="role">
+                                            <% if (user.role == 'admin') { %>
+                                            <option value="admin" selected>Admin</option>
+                                            <option value="user">User</option>
+                                            <% } else { %>
+                                            <option value="admin">Admin</option>
+                                            <option value="user" selected>User</option>
+                                            <% } %>
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-6">
+                                        <label for="firstname" class="col-form-label">Firstname:</label>
+                                        <input type="text" class="form-control" name="firstname" id="firstname"
+                                            placeholder="Firstname"
+                                            value="<%= user.firstname %>">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="lastname" class="col-form-label">Lastname:</label>
+                                        <input type="text" class="form-control" name="lastname" id="lastname"
+                                            placeholder="Lastname"
+                                            value="<%= user.lastname %>">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-6">
+                                        <label for="email" class="col-form-label">Email:</label>
+                                        <input type="text" class="form-control" name="email" id="email"
+                                            placeholder="Email" value="<%= user.email %>">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="username" class="col-form-label">Username:</label>
+                                        <input type="text" class="form-control" name="username" id="username"
+                                            placeholder="Username"
+                                            value="<%= user.username %>">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-6">
+                                        <label for="phone" class="col-form-label">Phone:</label>
+                                        <input type="text" class="form-control" name="phone" id="phone"
+                                            placeholder="Phone" value="<%= user.phone %>">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="password" class="col-form-label">Password:</label>
+                                        <input type="text" class="form-control" name="password" id="password"
+                                            placeholder="Password" value="******">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-12">
+                                        <label for="balance" class="col-form-label">Balance:</label>
+                                        <input type="number" class="form-control" name="balance" id="balance"
+                                            placeholder="Balance"
+                                            value="<%= user.balance %>">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="d-grid gap-2 col-sm-6 mx-auto">
+                                        <button type="submit" class="btn btn-primary btn-block">Update</button>
+                                    </div>
+                                </div>
+                            </form><!-- End General Form Elements -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main><!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="footer">
+        <%- include('../partials/footer') %>
+    </footer><!-- End Footer -->
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+
+    <%- include('../partials/plugin') %>
+
+</body>
+
+</html>

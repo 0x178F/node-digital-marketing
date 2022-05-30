@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head', {title: categories.title}) %>
+</head>
+
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="fixed-top  header-transparent ">
+        <%- include('../partials/header') %>
+    </header><!-- End Header -->
+
+
+    <main id="main">
+        <section class="inner-page">
+            <div class="container mt-5">
+                <div class="container mt-3">
+                    <h2 class="text-center pt-4"><% if (locals.categories) { %>
+                        <%= categories.title.toUpperCase() %>
+                        <% } %>
+                        <hr class="mx-auto" style="width:30%" , size="3" , color=black>
+                    </h2>
+                    <div class="text-center text-center mt-4 mb-5">
+                        <button id="bulkBuy" class="btn btn-l">Bulk Buy</button>
+                    </div>
+                    <table class=" text-center table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Creation Date</th>
+                                <th scope="col">Mobile Confirmation</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (locals.accounts) { %>
+                            <% accounts.forEach((account, i) => { %>
+                            <tr>
+                                <th scope="row"><%= i %> </th>
+                                <td><%= account.account_date %></td>
+                                <td><%- account.mobile_confirmation ? '<span class="badge bg-success">verified</span>' : ' <span class="badge bg-danger">unverified</span>'%>
+                                </td>
+                                <td><%= account.price %></td>
+                                <td>
+                                    <input type="hidden" name="_id" value="<%= account._id %>">
+                                    <button id="buyNow" class="btn btn-l">Buy Now</button>
+                                </td>
+                            </tr>
+
+                            <% }) %>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main><!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="clearfix">
+        <%- include('../partials/footer') %>
+
+    </footer><!-- End Footer -->
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+
+    <%- include('../partials/plugin') %>
+    <script>
+        const firstButton = document.querySelectorAll("#buyNow");
+        firstButton.forEach((element) => {
+            element.addEventListener("click", function (e) {
+                const id = element.previousElementSibling;
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you confirm the purchase?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    cancelButtonColor: '#d33',
+                    confirmButtonColor: '#24304a',
+                    confirmButtonText: 'Buy Now',
+                    preConfirm: (login) => {
+                        return fetch(
+                                `/account/buy/`, {
+                                    body: new URLSearchParams(`id=${id.value}`),
+                                    method: "POST"
+                                })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(response.statusText)
+                                }
+                                return response.json()
+                            })
+                            .catch(error => {
+                                Swal.showValidationMessage(
+                                    `Request failed: ${error}`
+                                )
+                            })
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
+                }).then((result) => {
+                    if (result.value.error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: result.value.error,
+                            confirmButtonColor: '#24304a',
+                        }
+                        )
+                    } else {
+                        if (result.isConfirmed) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Successful!',
+                                html: `${result.value.success}`,
+                                timer: 2000,
+                                timerProgressBar: true,
+                                willClose: () => {
+                                    window.location.reload()
+                                }
+                            })
+                        }
+                    }
+                })
+            });
+        });
+    </script>
+
+    <script>
+        const bulkBuy = document.getElementById("bulkBuy");
+        bulkBuy.addEventListener("click", function () {
+            Swal.fire({
+                title: 'How many accounts do you want to get?',
+                input: 'text',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Buy Now',
+                confirmButtonColor: '#24304a',
+                cancelButtonColor: '#d33',
+                showLoaderOnConfirm: true,
+                preConfirm: (login) => {
+                    return fetch(
+                            `/account/check/${login}?&<% if (locals.categories) { %>id=<%= categories._id %><% } %>`
+                        )
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(response.statusText)
+                            }
+                            return response.json()
+                        })
+                        .catch(error => {
+                            Swal.showValidationMessage(
+                                `Request failed: ${error}`,
+                            )
+                        })
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.value.error == undefined) return result;
+                Swal.fire({
+                    title: 'Error!',
+                    icon: 'error',
+                    text: `${result.value.error}`,
+                    confirmButtonColor: '#24304a',
+                })
+            }).then((result) => {
+                if (result) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: `Do you want to get ${result.value.count} accounts for ${result.value.totalPrice}₺ ?`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes',
+                        confirmButtonColor: '#24304a',
+                        preConfirm: (login) => {
+                            return fetch(
+                                    `/account/buy/${result.value.count}`, {
+                                        body: new URLSearchParams(
+                                            `id=<% if (locals.categories) { %><%= categories._id %><% } %>&count=${result.value.count}`
+                                        ),
+                                        method: "POST"
+                                    })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error(response.statusText)
+                                    }
+                                    return response.json()
+                                })
+                                .catch(error => {
+                                    Swal.showValidationMessage(
+                                        `Request failed: ${error}`
+                                    )
+                                })
+                        },
+                        allowOutsideClick: () => !Swal.isLoading()
+                    }).then((result) => {
+                        if (result.isConfirmed && !result.value.error) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Successful!',
+                                html: `${result.value.success}`,
+                                confirmButtonColor: '#24304a',
+                                timer: 2000,
+                                timerProgressBar: true,
+                                willClose: () => {
+                                    window.location.reload()
+                                }
+                            })
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                icon: 'error',
+                                text: `${result.value.error}`,
+                                confirmButtonColor: '#24304a',
+                            })
+                        }
+                    })
+                }
+            })
+        });
+    </script>
+</body>
+
+</html>

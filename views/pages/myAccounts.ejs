@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head', {title: "MY ACCOUNTS"}) %>
+</head>
+
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="fixed-top  header-transparent ">
+        <%- include('../partials/header') %>
+    </header><!-- End Header -->
+
+
+    <main id="main">
+        <section class="inner-page">
+            <div class="container mt-5">
+                <div class="container mt-3">
+                    <h2 class="text-center pt-4">MY ACCOUNTS
+                        <hr class="mx-auto" style="width:30%" , size="3" , color=black>
+                    </h2>
+                    <div class="text-center mt-4 mb-5">
+                        <button id="bulkDownload" class="btn btn-l">Bulk Download</button>
+                    </div>
+                    <table id="myTable" class="text-center table table-striped py-3">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Creation Date</th>
+                                <th scope="col">Mobile Confirmation</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (locals.accounts) { %>
+                            <% accounts.forEach((account, i) => { %>
+                            <tr>
+                                <th scope="row"><%= i %> </th>
+                                <td><%= account.category_id.title %></td>
+                                <td><%= account.account_date %></td>
+                                <td><%- account.mobile_confirmation ? '<span class="badge bg-success">verified</span>' : ' <span class="badge bg-danger">unverified</span>'%></td>
+                                <td><%= account.price %></td>
+                                <td>
+                                    <input type="hidden" name="mail" value="<%= account.mail %>">
+                                    <input type="hidden" name="password" value="<%= account.password %>">
+                                    <input type="hidden" name="extra_info" value="<%= account.extra_info %>">
+                                    <button id="showMe" class="btn btn-l">Show Me</button>
+                                </td>
+                            </tr>
+
+                            <% }) %>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main><!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="clearfix">
+        <%- include('../partials/footer') %>
+
+    </footer><!-- End Footer -->
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+    <%- include('../partials/plugin') %>
+
+
+    <script>
+        const firstButton = document.querySelectorAll("#showMe");
+        firstButton.forEach((element) => {
+            element.addEventListener("click", function (e) {
+                const username = element.previousElementSibling.previousElementSibling.previousElementSibling.value;
+                const password = element.previousElementSibling.previousElementSibling.value;
+                const extra_info = element.previousElementSibling.value
+                Swal.fire({
+                    html: `<div class="col-12">Username:<input id="swal-input1" class="swal2-input" value="${username}" disabled></div>` +
+                        `Password:<input id="swal-input1" class="swal2-input" value="${password}" disabled>` +
+                        `${extra_info ? `<div class="col-12">Extra Info:<input id="swal-input1" class="swal2-input" value="${extra_info}" disabled></div>` : ""}`,
+                    showCancelButton: true,
+                    confirmButtonColor: '#24304a',
+                    cancelButtonText: "Copy",
+                    cancelButtonColor: '#d33',
+                }).then(function (result) {
+                    if (result.dismiss === "cancel") {
+                        navigator.clipboard.writeText(username + ":" + password).then(
+                            function () {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Successful!',
+                                    html: 'Successfully copied to clipboard.',
+                                    timer: 2000,
+                                    timerProgressBar: true,
+                                    willClose: () => {
+                                        clearInterval()
+                                    }
+                                })
+                            })
+                    }
+                })
+            });
+        });
+    </script>
+    <script>
+        const bulkDownload = document.getElementById("bulkDownload");
+        bulkDownload.addEventListener("click", function () {
+            Swal.fire({
+                title: 'How many accounts do you want to get?',
+                html: '<input type="date" id="downloadDate" class="form-control" value="<%= new Date().toISOString().slice(0, 10); %>">' +
+                    `<select name="categories" id="selectCategory" placeholder="Select a option.." class="form-control col-lg-12 mt-3">` +
+                    `<% if (locals.categories) { %>` +
+                    +`<% categories.forEach(category => { %>` +
+                    `<option value="<%= category._id %>"><%= category.title %></option>` +
+                    `*<% }) %>` +
+                    +`<% } %>` +
+                    +`</select>`,
+                showCancelButton: true,
+                confirmButtonText: 'Download',
+                confirmButtonColor: '#24304a',
+                cancelButtonColor: '#d33',
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    const date = document.getElementById("downloadDate").value;
+                    const categoryId = document.getElementById('selectCategory').value
+                    return fetch(
+                            `/dl/${categoryId}?date=${date}`, {
+                                method: 'GET'
+                            })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(response.statusText)
+                            }
+                            return response.blob()
+                        }).catch(error => {
+                            Swal.showValidationMessage(
+                                `Request failed: ${error}`
+                            )
+                        }).then(blob => {
+                            var url = window.URL.createObjectURL(blob);
+                            var a = document.createElement('a');
+                            a.href = url;
+                            a.download = "accounts.txt";
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                        }).then(() => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Successful!',
+                                html: 'Successfully downloaded.',
+                                timer: 2000,
+                                timerProgressBar: true,
+                                willClose: () => {
+                                    clearInterval()
+                                }
+                            })
+                        })
+                },
+            })
+        });
+    </script>
+    <script>
+        $(document).ready( function () {
+    $('#myTable').DataTable({"bPaginate": false});
+} );
+    </script>
+</body>
+
+</html>

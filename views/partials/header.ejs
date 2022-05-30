@@ -1,0 +1,32 @@
+<div class="container d-flex align-items-center justify-content-between">
+  <div class="logo">
+    <h1><a href="/"><%= locals.settings ? locals.settings.settings.name : 'Store?' %> 
+    </a></h1>
+    <!-- Uncomment below if you prefer to use an image logo -->
+    <!-- <a href="index.html"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+  </div>
+
+  <nav id="navbar" class="navbar">
+    <ul>
+      <% if(locals.user && locals.user.role == 'admin'){ %>
+      <li><a class="nav-link scrollto" href="/admin">Admin</a></li>
+      <%} %>
+      <% if (locals.user == undefined) { %>
+      <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
+      <li><a class="nav-link scrollto" href="#pricing">Services</a></li>
+      <li><a class="nav-link scrollto" href="#details">Work</a></li>
+      <li><a class="nav-link scrollto" href="#faq">F.A.Q</a></li>
+      <% } %>
+      <% if (locals.user) { %>
+      <li><a class="nav-link scrollto" href="/#pricing">Services</a></li>
+      <li><a class="nav-link scrollto" href="/payments">Add Funds</a></li>
+      <li><a class="nav-link scrollto" href="/MyAccounts">My Accounts</a></li>
+      <li><a class="nav-link scrollto" href="/profile">Profile</a></li>
+      <li><a class="getstarted scrollto" href="/logout">Logout</a></li>
+      <% } else { %>
+      <li><a class="getstarted scrollto" id="signIn" href="javascript:void(0)">Sign In</a></li>
+      <% } %>
+    </ul>
+    <i class="bi bi-list mobile-nav-toggle"></i>
+  </nav><!-- .navbar -->
+</div>

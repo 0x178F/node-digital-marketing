@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head> <%- include('../partials/head', {title: "Add Category"}) %></head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <%- include('../partials/header') %>
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+    <%- include('../partials/side-bar') %>
+  </aside><!-- End Sidebar-->
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Category Page</h1>
+    </div><!-- End Page Title -->
+
+    <%- include('../partials/handleMessage') %>
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Add Category</h5>
+              <form action="" method="post" enctype="multipart/form-data">
+                <div class="row mb-3">
+                  <label for="title" class="col-sm-2 col-form-label">Title</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="title" class="form-control" id="title" placeholder="Category Name">
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="description" class="col-sm-2 col-form-label">Desc.</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="description" class="form-control" id="description"
+                      placeholder="Category Description">
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="slug" class="col-sm-2 col-form-label">Slug</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="slug" class="form-control" id="slug" placeholder="this-category-name">
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="file" class="col-sm-2 col-form-label">Image</label>
+                  <div class="col-sm-10">
+                    <input class="form-control" type="file" name="image" id="file">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <legend class="col-form-label col-sm-2 pt-0">Status</legend>
+                  <div class="col-sm-10">
+                    <div class="form-check">
+                      <input class="form-check-input" name="status" type="checkbox" id="status">
+                      <label class="form-check-label" for="status">
+                        Active
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label class="col-sm-2 col-form-label"></label>
+                  <div class="col-sm-10">
+                    <button type="submit" class="btn btn-primary">Add Category</button>
+                  </div>
+                </div>
+
+              </form><!-- End General Form Elements -->
+
+            </div>
+          </div>
+
+
+        </div>
+
+        <div class="col-lg-6">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Default Table</h5>
+
+              <!-- Default Table -->
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (locals.categories) { %>
+                  <% categories.forEach((element, i) => { %>
+                  <tr>
+                    <th scope="row"><%= i+1 %> </th>
+                    <td><%= element.title %> </td>
+                    <td>
+                      <% if (element.status) { %>
+                      <span class="badge bg-success">Active</span>
+                      <% } else { %>
+                      <span class="badge bg-danger">Passive</span>
+                      <% } %> </td>
+                    <form class="d-inline" action="/admin/categories/updateStatus" method="post">
+                      <td><button type="submit" class="btn btn-warning"><i class="bi bi-arrow-repeat"></i></button>
+                        <input type="hidden" name="updateStatus" value="<%= element._id %>|<%= element.status %> ">
+                    </form>
+                    <form class="d-inline" action="/admin/categories/delete" method="post">
+                      <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                      <input type="hidden" name="delete" value="<%= element._id %>">
+                    </form>
+                    </td>
+                  </tr>
+                  <% }) %>
+                  <% } %>
+                </tbody>
+              </table>
+              <!-- End Default Table Example -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <%- include('../partials/footer') %>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <%- include('../partials/plugin') %>
+
+</body>
+
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head> <%- include('../partials/head', {title: "Add Account"}) %></head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <%- include('../partials/header') %>
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+    <%- include('../partials/side-bar') %>
+  </aside><!-- End Sidebar-->
+
+  <main id="main" class="main">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Add Account</h5>
+
+        <!-- Floating Labels Form -->
+        <form class="row g-3" action="" method="post">
+          <%- include('../partials/handleMessage') %>
+          <div class="col-md-4">
+            <div class="form-floating mb-3">
+              <select class="form-select" name="category_id" id="category" aria-label="State">
+                <% if (locals.categories) { %>
+                <% categories.forEach(category => { %>
+                <option value="<%= category._id %>"><%= category.title %></option>
+                <% }) %>
+                <% } %>
+              </select>
+              <label for="category">Category</label>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-floating">
+              <input type="text" name="account_date" class="form-control" id="date" placeholder="Date">
+              <label for="date">Date</label>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-floating">
+              <input type="number" name="price" class="form-control" id="price" placeholder="Price" step="0.01">
+              <label for="price">Price</label>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <div class="form-floating">
+              <input type="text" name="extra_info" class="form-control" id="extra_info" placeholder="Extra Info">
+              <label for="extra_info">If there is any extra info you want to show, enter it here.</label>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+              <i class="bi bi-info-circle me-1"></i>
+              Syntax: mail:password
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div class="form-floating">
+              <textarea name="accounts" class="form-control" placeholder="Accounts" id="accounts"
+                style="height: 100px;"></textarea>
+              <label for="accounts">Enter the accounts here.</label>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <div class="form-check form-switch">
+              <input class="form-check-input" name="mobile_confirmation" type="checkbox" id="mobile_confirmation">
+              <label class="form-check-label" for="mobile_confirmation">Mobile
+                Confirmation</label>
+            </div>
+          </div>
+
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary">Add</button>
+            <button type="reset" class="btn btn-secondary">Reset</button>
+          </div>
+        </form><!-- End floating Labels Form -->
+
+      </div>
+    </div>
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <%- include('../partials/footer') %>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <%- include('../partials/plugin') %>
+
+</body>
+
+</html>

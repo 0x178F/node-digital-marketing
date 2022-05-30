@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head', {title: "My Profile"}) %>
+</head>
+
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="fixed-top  header-transparent ">
+        <%- include('../partials/header') %>
+    </header><!-- End Header -->
+
+
+    <main id="main">
+        <section class="inner-page">
+            <div class="container mt-5">
+                <div class="container mt-3">
+                    <h2 class="text-center pt-4">MY PROFILE
+                        <hr class="mx-auto" style="width:30%" , size="3" , color=black>
+                    </h2>
+                    <div class="b-rad">
+                        <form action="/profile/update" method="post" class="px-5 py-5">
+                           <div class="mb-4 d-flex justify-content-end"> <span class="balance px-2 py-2">Balance : <% if (locals.user) { %><%= locals.user.balance %>₺<% } %></span></div>
+                            <div class="form-row">
+                                <div class="row mx-auto">
+                                    <div class="col-md-6 mb-4">
+                                        <label for="firstname">Firstname</label>
+                                        <input type="text" name="firstname" class="form-control" id="firstname" placeholder="Firstname" value="<% if (locals.user) { %><%= locals.user.firstname %><% } %>">
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="lastname">Lastname</label>
+                                        <input type="text" name="lastname" class="form-control" id="lastname" placeholder="Lastname" value="<% if (locals.user) { %><%= locals.user.lastname %><% } %>">
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="username">Username</label>
+                                        <input type="text" class="form-control" id="username" placeholder="Username" value="<% if (locals.user) { %><%= locals.user.username %><% } %>" disabled>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="email">Email</label>
+                                        <input type="email" name="email" class="form-control" id="email" placeholder="Email" value="<% if (locals.user) { %><%= locals.user.email %><% } %>">
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="phone">Phone</label>
+                                        <input type="text" name="phone" class="form-control" id="phone" placeholder="Phone" value="<% if (locals.user) { %><%= locals.user.phone %><% } %>">
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="password">Password</label>
+                                        <input type="password" name="password" class="form-control" id="password" placeholder="Password" value="******">
+                                    </div>
+                                    <button type="submit" class="btn btn-l mt-3">Save</button>
+                                </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main><!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="clearfix">
+        <%- include('../partials/footer') %>
+
+    </footer><!-- End Footer -->
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+    <%- include('../partials/plugin') %>
+</body>
+
+</html>

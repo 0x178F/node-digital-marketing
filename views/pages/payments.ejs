@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head', {title: "My Payments"}) %>
+</head>
+
+<body>
+    <!-- ======= Header ======= -->
+    <header id="header" class="fixed-top  header-transparent ">
+        <%- include('../partials/header') %>
+    </header><!-- End Header -->
+
+    <main id="main">
+        <section class="inner-page">
+            <div class="container mt-5">
+                <div class="container mt-3">
+                    <h2 class="text-center pt-4">MY PAYMENTS
+                        <hr class="mx-auto" style="width:30%" , size="3" , color=black>
+                    </h2>
+                    <div class="text-center mt-4 mb-5">
+                        <button id="notifyPayment" class="btn btn-l">Pay</button>
+                    </div>
+                    <table id="myTable" class="text-center table table-striped py-3 mt-4">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Payment Date</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (locals.payments) { %>
+                            <% payments.forEach((payment, i) => { %>
+                            <tr>
+                                <th scope="row"><%= i %> </th>
+                                <td><%= payment.type %></td>
+                                <td><% const d = payment.date %>
+                                    <%= ("0" + d.getDate()).slice(-2) + "/" + ("0"+(d.getMonth()+1)).slice(-2) + "/" +
+                                d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);%>
+                                </td>
+                                <td><%= payment.amount %></td>
+                                <td><%- payment.status == '0' ? '<span class="badge bg-warning">Waiting</span>': payment.status == '1' ? ' <span class="badge bg-success">valid</span>' : ' <span class="badge bg-danger">invalid</span>'%>
+                                </td>
+                            </tr>
+                            <% }) %>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main><!-- End #main -->
+
+ 
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="clearfix">
+        <%- include('../partials/footer') %>
+
+    </footer><!-- End Footer -->
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+    <%- include('../partials/plugin') %>
+    <script>
+        const button = document.getElementById('notifyPayment');
+        button.addEventListener('click', function () {
+            Swal.fire({
+                title: 'Select Method',
+                html: `<% if (locals.bankMethods) { %>
+                    <div class="row row-cols-2">
+                    <% bankMethods.forEach((bank, i) => { %>
+                            <div class="col">
+                                <div class="cheGroup">
+                                    <input class="form-check-input" type="radio" name="type" id="<%= i %>" value="<%= JSON.stringify(bank) %>">
+                                    
+                                    <label class="mt-2 form-check-label" for="<%= i %>">
+                                    <% if (bank.image) { %>
+                                    <img class="img-fluid" src="<%= bank.image.replace('public/','/') %>" alt="<%= bank.bankName %>">
+                                    <% } else { %>
+                                        <%= bank.bankName %>
+                                        <% }  %>
+                                    </label>
+                                </div>
+                            </div>
+                    <% }) %>
+                    </div>
+                    <% } %>`,
+                showCancelButton: true,
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Next',
+                confirmButtonColor: '#24304a',
+                preConfirm: () => {
+                    return new Promise ((resolve) => {
+                        const radioButton = document.querySelector('input[name="type"]:checked')
+                        if (!radioButton) throw new Error('Please select a payment method.');
+                        resolve(
+                            document.querySelector('input[name="type"]:checked').value
+                        )
+                    }).catch((err) => {
+                        Swal.showValidationMessage(`${err}`)
+                    });
+                }
+            }).then((result)=>{
+                const bank = JSON.parse(result.value);
+                if(result.isConfirmed){
+                    const payType = result.value 
+                    Swal.fire({
+                    title: 'Pay',
+                    html: `
+                    <div class="mb-2">
+                    <b>
+                    ${bank.owner ?  `Owner: ${bank.owner}<br>`: ''}
+                    ${bank.iban ?  `IBAN: ${bank.iban}<br>`: ''}
+                    ${bank.sortCode ?  `Sort Code: ${bank.sortCode}<br>`: ''}
+                    ${bank.accountNumber ?  `Account Number: ${bank.accountNumber}<br>`: ''}
+                    </b>
+                    </div>
+                        <b class='text-danger'>Please write '<%= locals.user.username %>${generateCode(4)}' in the description.</b>
+                        <input type="date" id="date" class="form-control mt-3" value="<%= new Date().toISOString().slice(0, 10); %>">
+                        <input type="number" id="swalAmount" class="form-control mt-3" step="0.01" placeholder="Amount">
+                        <span class="d-block mt-3">Processing Time: 0-15 min</span>`,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#24304a',
+                    preConfirm: () => {
+                        return fetch((`/payments/pay/${bank.bankName}`), {
+                                method: 'POST',
+                                body: new URLSearchParams(
+                                    `amount=${document.getElementById('swalAmount').value}`
+                                )
+                            })
+                            .then(async response => {
+                                if (!response.ok) {
+                                    const data = await response.json()
+                                    if (data.error) throw data.error
+                                    throw new Error(response.statusText)
+                                }
+                                return response.json()
+                            })
+                            .catch(error => {
+                                console.log(error);
+                                Swal.showValidationMessage(
+                                    `Request failed: ${error}`
+                                )
+                            })
+                    }
+                }).then((res => {
+                    if (res.isConfirmed && res.value.success) {
+                        Swal.fire({
+                            title: 'Success',
+                            icon: 'success',
+                            text: `${res.value.success}`,
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#24304a',
+                            focusConfirm: false,
+                            timer: 1000,
+                            timerProgressBar: true,
+                            willClose: () => {
+                                window.location.reload()
+                            },
+                        })
+                    }
+                }))
+                }
+            })
+        });
+
+    const generateCode = (int) => {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < int; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   }
+   return result;
+}
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head> <%- include('../partials/head', {title: "Payment Methods"}) %></head>
+
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <%- include('../partials/header') %>
+    </header><!-- End Header -->
+
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+        <%- include('../partials/side-bar') %>
+    </aside><!-- End Sidebar-->
+
+    <main id="main" class="main">
+
+        <div class="pagetitle">
+            <h1>Payment Methods Page</h1>
+        </div><!-- End Page Title -->
+
+        <%- include('../partials/handleMessage') %>
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Add Bank</h5>
+                            <form id="bankMethods" class="mt-2" action="/admin/payments/bank" method="POST"
+                                enctype="multipart/form-data">
+                                <div class="row mb-3">
+                                    <label for="bankName" class="col-sm-2 col-form-label">Bank Name:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="bankName" class="form-control" id="bankName">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="owner" class="col-sm-2 col-form-label">Account Owner:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="owner" class="form-control" id="owner">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="iban" class="col-sm-2 col-form-label">IBAN:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="iban" class="form-control" id="iban">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="accountNumber" class="col-sm-2 col-form-label">Account Number:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="accountNumber" class="form-control" id="accountNumber">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="sortCode" class="col-sm-2 col-form-label">Sort Code:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="sortCode" class="form-control" id="sortCode">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="file" class="col-sm-2 col-form-label">Bank Image:</label>
+                                    <div class="col-sm-10">
+                                        <input type="hidden" id="image" name="slug" value="">
+                                        <input class="form-control" type="file" name="image" id="file">
+                                    </div>
+                                    
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="sortCode" class="col-sm-2 col-form-label">Bank Status:</label>
+                                    <div class="col-sm-10 align-self-center">
+                                        <input class="form-check-input" name="status" type="checkbox" id="status"
+                                            checked="">
+                                    </div>
+                                </div>
+
+
+                                <div class="row mb-3">
+                                    <div class="d-grid col-sm-6 mx-auto">
+                                        <button type="submit" class="btn btn-primary">Save</button>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+
+                    </form>
+                </div>
+
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Bank List</h5>
+
+                            <!-- Table with stripped rows -->
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Bank Name</th>
+                                        <th scope="col">Owner</th>
+                                        <th scope="col">IBAN</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (locals.bankMethods) { %>
+                                    <% bankMethods.forEach((method, i) => { %>
+                                    <tr>
+                                        <th scope="row"><%= i+1 %> </th>
+                                        <td><%= method.bankName %></td>
+                                        <td><%= method.owner %></td>
+                                        <td><%= method.iban %></td>
+                                        <td><%- method.status ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Passive</span>' %>
+                                        </td>
+                                        <td>
+                                            <form class="d-inline" action="/admin/payments/bank/<%= method._id %>">
+                                                <button type="submit" class="btn btn-secondary"><i
+                                                        class="bi bi-pencil-square"></i></button>
+                                            </form>
+                                            <form class="d-inline" action="/admin/payments/bank/<%= method._id %>/delete" method="post">
+                                                <button type="submit" class="btn btn-danger"><i
+                                                        class="bi bi-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                            <!-- End Table with stripped rows -->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main><!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="footer">
+        <%- include('../partials/footer') %>
+    </footer><!-- End Footer -->
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+
+    <%- include('../partials/plugin') %>
+    <script>
+        const form = document.querySelector("#bankMethods");
+        const imageInput = document.querySelector('#image');
+        const bank = document.querySelector('#bankName');
+        
+        form.addEventListener('submit', function (e) {
+            imageInput.value = bank.value;
+        });
+    </script>
+</body>
+
+</html>

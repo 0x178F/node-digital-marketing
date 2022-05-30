@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head> <%- include('../partials/head', {title: "Bank"}) %></head>
+
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <%- include('../partials/header') %>
+    </header><!-- End Header -->
+
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+        <%- include('../partials/side-bar') %>
+    </aside><!-- End Sidebar-->
+
+    <main id="main" class="main">
+
+        <div class="pagetitle">
+            <h1>Bank Page</h1>
+        </div><!-- End Page Title -->
+
+        <%- include('../partials/handleMessage') %>
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Bank</h5>
+                            <form id="settingsForm" class="mt-2" action="/admin/payments/bank/<%= bank._id %>/update/"
+                                method="POST" enctype="multipart/form-data">
+                                <div class="row mb-3">
+                                    <label for="bankName" class="col-sm-2 col-form-label">Bank Name:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="bankName" class="form-control" id="bankName"
+                                            value="<%= bank.bankName %>">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="owner" class="col-sm-2 col-form-label">Account Owner:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="owner" class="form-control" id="owner"
+                                            value="<%= bank.owner %>">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="iban" class="col-sm-2 col-form-label">IBAN:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="iban" class="form-control" id="iban"
+                                            value="<%= bank.iban %>">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="accountNumber" class="col-sm-2 col-form-label">Account Number:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="accountNumber" class="form-control" id="accountNumber"
+                                            value="<%= bank.accountNumber %>">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="sortCode" class="col-sm-2 col-form-label">Sort Code:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="sortCode" class="form-control" id="sortCode"
+                                            value="<%= bank.sortCode %>">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="file" class="col-sm-2 col-form-label">Bank Image:</label>
+                                    <div class="col-sm-8">
+                                        <input type="hidden" name="slug" value="<%= bank.bankName %>">
+                                        <input class="form-control" type="file" name="image" id="file">
+                                    </div>
+                                    <div class="col-sm-2"><img class="col-sm-12"
+                                            src="<%= bank.image ? bank.image.replace('public/','/') : ''%>">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="sortCode" class="col-sm-2 col-form-label">Bank Status:</label>
+                                    <div class="col-sm-10 align-self-center">
+                    <% if (bank.status) { %>
+                        <input class="form-check-input" name="status" type="checkbox" id="status"
+                        checked="">
+                     <% } else { %>
+                        <input class="form-check-input" name="status" type="checkbox" id="status">
+                    <% } %>
+                                    </div>
+                                </div>
+
+
+                                <div class="row mb-3">
+                                    <div class="d-grid col-sm-6 mx-auto">
+                                        <button type="submit" class="btn btn-primary">Save</button>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main><!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="footer">
+        <%- include('../partials/footer') %>
+    </footer><!-- End Footer -->
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+
+    <%- include('../partials/plugin') %>
+
+</body>
+
+</html>
